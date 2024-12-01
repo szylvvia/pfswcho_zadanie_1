@@ -4,14 +4,14 @@ W ramach zadania stworzono zestaw plików manifestów (plików yaml) opisującyc
 
 ## Część obowiązkowa
 
-### Utworzenie przestrzeni nazw <i>zad1</i>
+### 0. Utworzenie przestrzeni nazw <i>zad1</i>
 W tym celu uruchomiono plik manifestu o nazwie namespace_zad1.yaml za pomocą polecenia ```kubectl apply -f namespace_zad1.yaml```. Aby sprawdzić poprawność wykonanego polecenia wykorzystano  polecenie wyświetajace wszytskie dostępne przestrzenie nazw ```kubectl get namespace```. Na jego podsatwie można wnioskować, że przestrzeń nazw została stworzona i jest aktywna.
 <br>
 
 ![image](https://github.com/user-attachments/assets/79e5e628-95fb-4d89-acec-a4fa8d56258f)
 
 
-### Utworzenie ograniczenia na zasoby <i>(quota)</i>
+### 1. Utworzenie ograniczenia na zasoby <i>(quota)</i>
 W tym celu uruchomiono plik manifestu o nazwie  quota_zad1.yaml za pomocą polecenia ```kubectl apply -f quota_zad1.yaml```. Obiekt Quota został utworzony wraz z określonymi zasobami:
 <ul>
   <li>maksymalna liczba Pod-ów: 10</li>
@@ -24,7 +24,7 @@ Aby sprawdzić poprawność utworzonego obiektu wyswietlono najpierw obiekty typ
 
 ![image](https://github.com/user-attachments/assets/6a4eca23-4024-4f99-9cd4-7d93ab20586b)
 
-### Utworzenie Pod-a <i>worker</i>
+### 2. Utworzenie Pod-a <i>worker</i>
 W tym celu uruchomiono plik manifestu o nazwie pod_worker.yaml za pomocą polecenia: ```kubectl apply -f pod_worker.yaml```. Pod został utworzony w przestrzeni nazw zad1 i bazuje na obrazie <i>nginx</i>. Ma następujące ograniczenia na wykorzystywane zasoby:
 <ul>
   <li>limits
@@ -55,7 +55,7 @@ W dalszej części rezultatu tego polecenia można sprawdzić logi, które zawie
 
 ![image](https://github.com/user-attachments/assets/8f6ce168-87c3-40f4-8cf3-c65602fb422f)
 
-### Modyfikacja pliku php-apache.yaml
+### 3. Modyfikacja pliku php-apache.yaml
 Bazując na przykładzie oraz dokumentacji Kubernetes zmodyfikowano plik tak by obiekty Deployment i Service utworzone zostały w przestrzeni nazw zad1. Jednocześnieobiekt Deployment ma mieć następujące ograniczenia na wykorzystywane zasoby:
 <ul>
   <li>limits
@@ -87,7 +87,7 @@ Biorąc pod uwagę szczegółowe informacje o obiekcie Sevice można z nich odcz
 
 ![image](https://github.com/user-attachments/assets/7a4ccbe8-1cda-43e5-933f-cc52c7870c19)
 
-### Utworzenie obiektu <i>HorizontalPodAutoscaler</i>
+### 4. Utworzenie obiektu <i>HorizontalPodAutoscaler</i>
 Utworzono plik manifestu definiujący obiekt HorizontalPodAutoscaler, który pozwoli na autoskalowanie wdrożenia (Deployment) php-apache z zastosowaniem następujących parametrów:
 <ul>
   <li>minReplicas: 1</li>
@@ -117,8 +117,11 @@ Gotowy plik manifestu o nazwie hpa_php_apache.yaml został uruchomiony za pomoc�
 
 ![image](https://github.com/user-attachments/assets/2cf417cd-7517-4af2-b9a1-4a5e52f2f540)
 
-### Uruchomienie aplikacji generującej obciążenie dla aplikacji <i>php-apache</i>
-W tym celu wykorzystano plik stworzony plik manifestu o nazwie load_generator.yaml dla aplikacji generujacej obciazenie. Został uruchomiony za pomocą polecenia:  ```kubectl apply -f load_generator.yaml```. 
+### 5. Uruchomienie zadeklarowanych obiektów i sprawdzenie poprawności działania
+Wszytskie obiekty były uruchamiane na bieżąco a ich poprawnosć weryfikowana za pomoca poleceń w punkach powyżej.
+
+### 6. Uruchomienie aplikacji generującej obciążenie dla aplikacji <i>php-apache</i>
+W tym celu wykorzystano plik stworzony plik manifestu o nazwie load_generator.yaml dla aplikacji generujacej obciazenie. Został utworzony na podstawie polecenia z dokumentacjji Kubernetes. Uruchomiono go za pomocą polecenia:  ```kubectl apply -f load_generator.yaml```. 
 
 ![image](https://github.com/user-attachments/assets/c36cf1de-44c0-4e24-8903-b202a7d1205b)
 
@@ -160,7 +163,7 @@ Tak, możliwe jest przeprowadzenie aktualizacji aplikacji (np. wersji obrazu kon
 ![image](https://github.com/user-attachments/assets/3e855cd1-24bb-4cf1-963a-b95877a1eb40)
 
 ### 2. Podczas aktualizacji zawsze będa aktywne 2 pod-y realizujące działanie przykładowej aplikacji, jaki parametr strategii rollingUpdate dobrać aby to zagwarantować?
-W tym celu należy skorzystać z parametru <i>maxSurge</i> i ustawic jego wartość na 2. Pole to określa maksymalną liczbę podów, które można utworzyć ponad żądaną liczbę podów. Dzięki temu parametrowi nowe pody są uruchamiane zanim stare pody zostaną usunięte, co zapewnia, że zawsze będą aktywne dwa pody, a aplikacja będzie działać bez pzrestojów. Warto również ustawic parametr <i>maxUnavailable</i> na wartość 0, aby określić maksymalną liczbę podów, które mogą być niedostępne podczas procesu aktualizacji. W tym przypadku wszytskie pody muszą być dostępne. Pody nie zostaną usuniete, dopóki aplikacja nie będzie mieć aktywnych nowych podów. Dzięki temu liczba podów, nigdy nie spadnie poniżej określonej liczby podów 2. Takie podejście zapewnia stałą dostępność podów realizujących dzuałanie aplikacji. Przykładowy kod z sekcją rollingUpdate (na podsatwie doumentacji Kubernetes):
+W tym celu należy skorzystać z parametru <i>maxSurge</i> i ustawic jego wartość na 2. Pole to określa maksymalną liczbę podów, które można utworzyć ponad żądaną liczbę podów. Dzięki temu parametrowi nowe pody są uruchamiane zanim stare pody zostaną usunięte, co zapewnia, że zawsze będą aktywne dwa pody, a aplikacja będzie działać bez pzrestojów. Warto również ustawic parametr <i>maxUnavailable</i> na wartość 0, aby określić maksymalną liczbę podów, które mogą być niedostępne podczas procesu aktualizacji. W tym przypadku wszytskie pody muszą być dostępne. Pody nie zostaną usuniete, dopóki aplikacja nie będzie mieć aktywnych nowych podów. Dzięki temu liczba podów, nigdy nie spadnie poniżej określonej liczby podów 2. Takie podejście zapewnia stałą dostępność podów realizujących działanie aplikacji. Przykładowy kod z sekcją rollingUpdate (na podsatwie doumentacji Kubernetes):
 ```
 strategy:
    type: RollingUpdate
@@ -190,6 +193,10 @@ status:
   desiredReplicas: 0
 ```
 </div>
+
+## Podsumowanie
+Jako opracowanie zadania wykonano zarówno część obowiązkową jak i dodatkową. W ramach części obowiązkowej zadania 1 został utworzony szereg plików manifestów dla obiektów opisanych w wymaganiach zadania. Zdefiniowano dla nich określone parametry. Każdy z nich został uruchomiony, a poprawność jego zadania została zweryfikowana dzięki wykorzytsaniu poleceń diagnostycznych (wszytskie wykorzystane zostały wymienione w sprawozadniu). Dla autosklaera HPA została dobrana wartość parametru <i>maxReplicas</i> zgodnie z nałożonymi ograniczeniami zasóbów quota oraz limitów obiektu Deployment. Uruchomiono generator obciążenia, aby zweryfikować poprwność działania autoskalera, a także wykorzystano do tego polecenia diagnostyczne. Część dodatkowa składa się z odpowiedzi na pytania wraz z wskazaniem żródła, a także zmian w plikach manifestów. Wykonanie zadania zwłaszcza z części obowiązkowej było możliwością zweryfikowania umiejętności w praktycznym zadaniu z zakresu tworzenia różnego rodzaju obiektów. Część nieobowiazkowa pozwoliła na rozszerzenie wiedzy z zakresu aktualizacji aplikacji oraz dobierania parametrów stratego <i>rollingUpdate</i>, tak aby zapewnić ciągłość w dostępie do aplikacji. Wykonanie zadania przebiegło pomyślnie. 
+
 <hr>
 <div style="text-align: justify;">
   <i>Opracowanie zadania powstało w ramach laboratorium na Politechnice Lubelskiej.</i>
