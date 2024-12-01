@@ -1,6 +1,7 @@
 # ZADANIE 1 - Programowanie FullStack w Chmurze Obliczeniowej
 <div style="text-align: justify;">
 W ramach zadania stworzono zestaw plików manifestów (plików yaml) opisujących obiekty środowiska Kubernetes zgodnie z założeniami. Utworzono obiekty zdeklarowane w opracowanych plikach yaml. Potwierdzono ich poprawne uruchomienie za pomocą poleceń.
+</div>
 
 ## Część obowiązkowa
 
@@ -88,7 +89,7 @@ Biorąc pod uwagę szczegółowe informacje o obiekcie Sevice można z nich odcz
 ![image](https://github.com/user-attachments/assets/7a4ccbe8-1cda-43e5-933f-cc52c7870c19)
 
 ### 4. Utworzenie obiektu <i>HorizontalPodAutoscaler</i>
-Utworzono plik manifestu definiujący obiekt HorizontalPodAutoscaler, który pozwoli na autoskalowanie wdrożenia (Deployment) php-apache z zastosowaniem następujących parametrów:
+Utworzono plik manifestu definiujący obiekt HorizontalPodAutoscaler, który pozwoli na autoskalowanie wdrożenia (Deployment) <i>php-apache</i> z zastosowaniem następujących parametrów:
 <ul>
   <li>minReplicas: 1</li>
   <li>targetCPUUtilizationPercentage: 50</li>
@@ -172,7 +173,7 @@ strategy:
      maxUnavailable: 0
 ```
 ### 3. Nie zostaną przekroczone parametry wcześniej zdefiniowanej quoty dla przestrzeni zad1, jak należy zmienić ustawienia autoskalera HPA?
-Ponieważ dobrany parametr <i>maxReplicas: 6</i> dla autosklaera HPA dla obiektu Deployment <i>php-apache</i> jest maksymalną liczbą podów jakie można uruchomić, aby nie przekroczyć zasobów quoty <i>zad1</i> dla wartości memory i CPU, to w momencie gdy ustawiamy parametr startego rolling update <<i>maxSurge: 2</i> może dojść do sytuacji gdy liczba deployment będzie uruchamiać nowe dodatkowe pody (zgodnie z parametrem <i>maxSurge: 2</i>) oraz utrzymywać stare, co w szczytowym momencie może osiągnąć wartość 8. W takiej sytuacji przekroczone zostaną zdefiniowane parametry quoty. Aby temu zapobiec, należy zmniejszyć watość parametry <i>maxReplicas</i> do 4, dzięki czemu nawet jeśli deployment będzie uruchamiał nowe pody i utrzymywał stare, to będzie ich maksymalnie 6 (<i>maxReplicas</i> + <i>maxSurge</i>), a taka wartość jest maksymalna, ktora nie przekroczy parametrów dla zdefiniowenej quoty <i>zad1</i>. Poniżej kod autoskalera HPA ze omówioną zmianą:
+Ponieważ dobrany parametr <i>maxReplicas: 6</i> dla autosklaera HPA dla obiektu Deployment <i>php-apache</i> jest maksymalną liczbą podów jakie można uruchomić, aby nie przekroczyć zasobów quoty <i>zad1</i> dla wartości memory i CPU, to w momencie gdy ustawiamy parametr startego rolling update <i>maxSurge: 2</i> może dojść do sytuacji gdy liczba deployment będzie uruchamiać nowe dodatkowe pody (zgodnie z parametrem <i>maxSurge: 2</i>) oraz utrzymywać stare, co w szczytowym momencie może osiągnąć wartość 8. W takiej sytuacji przekroczone zostaną zdefiniowane parametry quoty. Aby temu zapobiec, należy zmniejszyć watość parametry <i>maxReplicas</i> do 4, dzięki czemu nawet jeśli deployment będzie uruchamiał nowe pody i utrzymywał stare, to będzie ich maksymalnie 6 (<i>maxReplicas</i> + <i>maxSurge</i>), a taka wartość jest maksymalna, ktora nie przekroczy parametrów dla zdefiniowenej quoty <i>zad1</i>. Poniżej kod autoskalera HPA ze omówioną zmianą:
 ```
 apiVersion: autoscaling/v1
 kind: HorizontalPodAutoscaler
@@ -192,10 +193,12 @@ status:
   currentReplicas: 0
   desiredReplicas: 0
 ```
-</div>
+
 
 ## Podsumowanie
+<div style="text-align: justify;">
 Jako opracowanie zadania wykonano zarówno część obowiązkową jak i dodatkową. W ramach części obowiązkowej zadania 1 został utworzony szereg plików manifestów dla obiektów opisanych w wymaganiach zadania. Zdefiniowano dla nich określone parametry. Każdy z nich został uruchomiony, a poprawność jego zadania została zweryfikowana dzięki wykorzytsaniu poleceń diagnostycznych (wszytskie wykorzystane zostały wymienione w sprawozadniu). Dla autosklaera HPA została dobrana wartość parametru <i>maxReplicas</i> zgodnie z nałożonymi ograniczeniami zasóbów quota oraz limitów obiektu Deployment. Uruchomiono generator obciążenia, aby zweryfikować poprwność działania autoskalera, a także wykorzystano do tego polecenia diagnostyczne. Część dodatkowa składa się z odpowiedzi na pytania wraz z wskazaniem żródła, a także zmian w plikach manifestów. Wykonanie zadania zwłaszcza z części obowiązkowej było możliwością zweryfikowania umiejętności w praktycznym zadaniu z zakresu tworzenia różnego rodzaju obiektów. Część nieobowiazkowa pozwoliła na rozszerzenie wiedzy z zakresu aktualizacji aplikacji oraz dobierania parametrów stratego <i>rollingUpdate</i>, tak aby zapewnić ciągłość w dostępie do aplikacji. Wykonanie zadania przebiegło pomyślnie. 
+</div>
 
 <hr>
 <div style="text-align: justify;">
