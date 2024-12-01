@@ -159,7 +159,36 @@ Tak, możliwe jest przeprowadzenie aktualizacji aplikacji (np. wersji obrazu kon
 
 ![image](https://github.com/user-attachments/assets/3e855cd1-24bb-4cf1-963a-b95877a1eb40)
 
-
+### 2. Podczas aktualizacji zawsze będa aktywne 2 pod-y realizujące działanie przykładowej aplikacji, jaki parametr strategii rollingUpdate dobrać aby to zagwarantować?
+W tym celu należy skorzystać z parametru <i>maxSurge</i> i ustawic jego wartość na 2. Pole to określa maksymalną liczbę podów, które można utworzyć ponad żądaną liczbę podów. Dzięki temu parametrowi nowe pody są uruchamiane zanim stare pody zostaną usunięte, co zapewnia, że zawsze będą aktywne dwa pody, a aplikacja będzie działać bez pzrestojów. Warto również ustawic parametr <i>maxUnavailable</i> na wartość 0, aby określić maksymalną liczbę podów, które mogą być niedostępne podczas procesu aktualizacji. W tym przypadku wszytskie pody muszą być dostępne. Pody nie zostaną usuniete, dopóki aplikacja nie będzie mieć aktywnych nowych podów. Dzięki temu liczba podów, nigdy nie spadnie poniżej określonej liczby podów 2. Takie podejście zapewnia stałą dostępność podów realizujących dzuałanie aplikacji. Przykładowy kod z sekcją rollingUpdate (na podsatwie doumentacji Kubernetes):
+```
+strategy:
+   type: RollingUpdate
+   rollingUpdate:
+     maxSurge: 2
+     maxUnavailable: 0
+```
+### 3. Nie zostaną przekroczone parametry wcześniej zdefiniowanej quoty dla przestrzeni zad1, jak należy zmienić ustawienia autoskalera HPA?
+Ponieważ dobrany parametr <i>maxReplicas: 6</i> dla autosklaera HPA dla obiektu Deployment <i>php-apache</i> jest maksymalną liczbą podów jakie można uruchomić, aby nie przekroczyć zasobów quoty <i>zad1</i> dla wartości memory i CPU, to w momencie gdy ustawiamy parametr startego rolling update <<i>maxSurge: 2</i> może dojść do sytuacji gdy liczba deployment będzie uruchamiać nowe dodatkowe pody (zgodnie z parametrem <i>maxSurge: 2</i>) oraz utrzymywać stare, co w szczytowym momencie może osiągnąć wartość 8. W takiej sytuacji przekroczone zostaną zdefiniowane parametry quoty. Aby temu zapobiec, należy zmniejszyć watość parametry <i>maxReplicas</i> do 4, dzięki czemu nawet jeśli deployment będzie uruchamiał nowe pody i utrzymywał stare, to będzie ich maksymalnie 6 (<i>maxReplicas</i> + <i>maxSurge</i>), a taka wartość jest maksymalna, ktora nie przekroczy parametrów dla zdefiniowenej quoty <i>zad1</i>. Poniżej kod autoskalera HPA ze omówioną zmianą:
+```
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  creationTimestamp: null
+  name: php-apache
+  namespace: zad1
+spec:
+  maxReplicas: 4
+  minReplicas: 1
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: php-apache
+  targetCPUUtilizationPercentage: 50
+status:
+  currentReplicas: 0
+  desiredReplicas: 0
+```
 </div>
 <hr>
 <div style="text-align: justify;">
