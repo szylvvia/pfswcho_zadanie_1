@@ -2,7 +2,7 @@
 <div style="text-align: justify;">
 W ramach zadania stworzono zestaw plików manifestów (plików yaml) opisujących obiekty środowiska Kubernetes zgodnie z założeniami. Utworzono obiekty zdeklarowane w opracowanych plikach yaml. Potwierdzono ich poprawne uruchomienie za pomocą poleceń.
 
-<hr>
+## Część obowiązkowa
 
 ### Utworzenie przestrzeni nazw <i>zad1</i>
 W tym celu uruchomiono plik manifestu o nazwie namespace_zad1.yaml za pomocą polecenia ```kubectl apply -f namespace_zad1.yaml```. Aby sprawdzić poprawność wykonanego polecenia wykorzystano  polecenie wyświetajace wszytskie dostępne przestrzenie nazw ```kubectl get namespace```. Na jego podsatwie można wnioskować, że przestrzeń nazw została stworzona i jest aktywna.
@@ -151,6 +151,14 @@ Wykorzystując polecenie ```kubectl describe deployment php-apache --namespace=z
 ![image](https://github.com/user-attachments/assets/08d37b46-4056-43f2-a43a-6fcbe52fc1ed)
 
 Dobrany parametr <i>maxReplicas: 6</i> dla obiektu HPA nie powoduje przekroczenia zasobów, obiekt działa poprawnie, skalowanie przebiega pomyślnie zarówno w górę jak i w dół.
+
+## Część dodatkowa
+
+### 1. Czy możliwe jest dokonanie aktualizacji aplikacji (np. wersji obrazu kontenera) gdy aplikacja jest pod kontrolą autoskalera HPA?
+Tak, możliwe jest przeprowadzenie aktualizacji aplikacji (np. wersji obrazu kontenera) podczas gdy aplikacja jest pod kontrolą autoskalera HPA.
+
+![image](https://github.com/user-attachments/assets/3e855cd1-24bb-4cf1-963a-b95877a1eb40)
+
 
 </div>
 <hr>
